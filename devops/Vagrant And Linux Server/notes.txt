@@ -1,0 +1,57 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "spox/ubuntu-arm"
+
+    config.vm.provider "vmware_fusion" do |v|
+        v.memory = 1024
+        v.cpus = 2
+    end
+
+    # Sync vagrant file in host machine 
+    config.vm.synced_folder "./scripts", "/opt/scripts"
+    config.vm.provision "shell", inline: <<-SHELL
+        cd /opt/scripts
+        touch /opt/scripts/provisioned.txt
+    SHELL
+
+    config.vm.network "private_network", ip: "192.168.56.17", bridge: nil
+    config.vm.network "public_network", bridge: true
+end
+
+
+synced_folder : to sync data of vritua machine to host machine 
+provision provision (comnad to run )
+it runs when vm is creted 
+even vafrant reload dont work
+
+use vagrant provision or vagrant reload --provision
+
+
+som tool commands
+vagrant box list
+❯ vagrant box list
+bandit145/centos_stream9_arm (vmware_desktop, 20240905183502)
+spox/ubuntu-arm              (vmware_desktop, 1.0.0)
+
+
+gotot folder wher u want to init vm
+do 
+vagrnat init bandit145/centos_stream9_ar
+
+to use ip  in browser (i dont know what we cal tis)
+
+yum install httpd 
+yum enable httpd
+
+ip addr show (to check ip addss)
+NOTE: Disable firwewall to use ip in broswer
+
+[root@finance ~]# sudo systemctl stop firewalld
+[root@finance ~]# sudo systemctl disable firewalld
+Removed "/etc/systemd/system/multi-user.target.wants/firewalld.service".
+Removed "/etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service".
+hit http:ip
+e.g. http://192.168.33.10/
+
+we can add some html 
+here
+vim /var/www/html
