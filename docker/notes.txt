@@ -1,0 +1,84 @@
+ By default non root user does not have access to docker.  (hot to allow ? write). 
+In linux we have a user for dokcer. 
+
+ Imsge:
+)pls defeimed)
+ A stopped contner like vm image
+ consist of miultple layers
+ an app will be bundled in images
+ continer runs on images
+
+docker run -> create continer  from image
+docker images -> check imnages in system
+
+docker run --name myWeb -p 6969:80 -d nginx
+docker run --name myWeb -P -d nginx  (P for automatic port mapping)
+   -> run continer
+6969 is host port. 
+80 is docker's private port. To access this continer from outside the docker we need to request on host port. 
+
+ docker ps -> list docker continer
+ docker ps -a -> list all docker continer
+
+
+ doocker stop continerId
+ docker start continerId
+
+
+How can we login to contiern like we did in VMs ? or AWS instances unsing ssh. 
+We can't as it is process
+How to ligin then? We can attach the dokcer continer. 
+to run any command:
+docker exec myWeb ls /
+docker exec -it myWeb /bin/bash (write mean of -it). 
+exit -> to exit
+docker rm 29611b7fb6ed (rmeove container)
+or
+docker rm myWeb
+
+docker rmi nginx (delete image)
+Deleted: sha256:d5f28ef21aabddd098f3dbc21fe5b7a7d7a184720bc07da0b6c9b9820e97f25e
+
+How to check logs? logs bascial yhere is output of docker continer
+CMD: docker logs c8e14dfa507e
+
+VOLUMNES:
+Continaer are volatile.
+We need to make continer stateful. We have two choices:
+1. Volumes
+2. Bind Mounts
+
+docker run --name my-mysql -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d --platform linux/amd64 mysql:5.7
+-e used to export the env vars
+
+ docker inspect 67846427682d -> gives us info like volumn, cmd ran by contiuner when init, entrypoint
+
+docker run -d \
+  --name my-mysql \
+  -e MYSQL_ROOT_PASSWORD=rootpass \
+  -v $(pwd)/data:/var/lib/mysql \
+  mysql:8.0
+
+here -v is used to To bind mount a directory or file from your host machine into a Docker container and it is persisntent not volatile
+better way is to crate volumme
+Manage volumes
+
+Commands:
+  create      Create a volume
+  inspect     Display detailed information on one or more volumes
+  ls          List volumes
+  prune       Remove unused local volumes
+  rm          Remove one or more volumes
+
+
+  ocker volume create mydbv
+
+docker run -d \
+  --name my-mysql \
+  -e MYSQL_ROOT_PASSWORD=rootpass \
+  -v mydbv:/var/lib/mysql \
+  mysql:8.0
+
+  DockerFile is used to build dokcer imnage
+
+  How to buikld docker image ? write stepwise
