@@ -1,7 +1,5 @@
 # MongoDB and PostgreSQL Architecture Notes for Interview Preparation
 
-This Markdown file provides a simple, pointwise breakdown of MongoDB and PostgreSQL architecture notes, focusing on important concepts for interview preparation. Written in easy language, it covers key points to help you understand and explain these databases effectively. Last updated: 10:35 AM IST on Saturday, September 27, 2025.
-
 ---
 
 ## MongoDB Architecture Notes
