@@ -1,6 +1,6 @@
 # MongoDB and PostgreSQL Architecture Notes for Interview Preparation
 
-This Markdown file provides a simple, pointwise breakdown of MongoDB and PostgreSQL architecture notes, focusing on important concepts for interview preparation. Written in easy language, it covers key points to help you understand and explain these databases effectively. Last updated: 10:28 AM IST on Saturday, September 27, 2025.
+This Markdown file provides a simple, pointwise breakdown of MongoDB and PostgreSQL architecture notes, focusing on important concepts for interview preparation. Written in easy language, it covers key points to help you understand and explain these databases effectively. Last updated: 10:35 AM IST on Saturday, September 27, 2025.
 
 ---
 
@@ -20,35 +20,38 @@ This Markdown file provides a simple, pointwise breakdown of MongoDB and Postgre
   - A **block map** tracks used and free disk blocks.
 
 - **How MongoDB Works:**
-  - Uses a **memory-mapped file system** to store data on disk and map it to memory for faster access.
-  - Avoids slow disk reads by keeping data in memory when possible.
+  - Uses a **memory-mapped file system** (with MMAPv1) or a cache (with WiredTiger) to store data on disk and map it to memory for faster access.
+  - Only a portion of data is kept in memory based on demand; the rest stays on disk until needed.
+  - Avoids slow disk reads by prioritizing frequently accessed data in memory or cache.
 
 - **Document Lifecycle:**
   1. **Document Validation**: Checks document structure (e.g., required fields like title, author, body) using JSON schema.
      - Example: Rejects documents missing required fields.
   2. **Document Storage**: Stores validated data as binary on disk using `insertOne`.
   3. **Index Creation**: Builds indexes (e.g., on `title`) using B-trees for fast queries.
-  4. **Memory Allocation**: Allocates memory for quick access without disk reads.
-  5. **Document Retrieval**: Checks memory first; reads from disk if not found.
+  4. **Memory Allocation**: Allocates memory or cache space for quick access without disk reads.
+  5. **Document Retrieval**: Checks memory or cache first; reads from disk if not found.
 
 - **Storage Engine:**
-  - Default is **WiredTiger**, offering better performance than MMAPv1.
+  - Default is **WiredTiger**, offering better performance than the older MMAPv1.
   - Features:
     - Document-level concurrency control.
-    - Transactions for multiple updates.
-    - Data compression and caching.
-    - B-tree indexing for efficiency.
+    - Multi-document transactions for complex updates.
+    - Data compression and caching to save space and speed up access.
+    - B-tree indexing for efficient searches.
     - Point-in-time recovery and hot backups.
+    - Supports encryption at rest for security.
 
 - **Benefits Over SQL:**
   - **Flexible Schema**: Adapts to changing data structures.
-  - **Scalability**: Scales horizontally with more nodes.
-  - **High Performance**: Uses in-memory data for fast reads/writes.
-  - **Strong Consistency**: Ensures data consistency across nodes.
-  - **Rich Querying**: Supports indexing and flexible queries.
-  - **Efficient Resources**: Uses BSON for smaller data sizes.
+  - **Scalability**: Scales horizontally with sharding across multiple nodes.
+  - **High Performance**: Uses in-memory caching or memory mapping for fast reads/writes.
+  - **Strong Consistency**: Ensures data consistency with multi-document transactions.
+  - **Rich Querying**: Supports advanced queries, aggregations, and geospatial indexing.
+  - **Efficient Resources**: Uses BSON for smaller data sizes and supports column-store indexes for analytics.
+  - **Change Streams**: Allows real-time data updates for applications.
 
-- **Interview Tip**: Highlight MongoDB’s flexibility and scalability for dynamic apps, and mention WiredTiger’s role in performance.
+- **Interview Tip**: Highlight MongoDB’s flexibility, scalability with sharding, and modern features like change streams and encryption, while noting WiredTiger’s efficiency.
 
 ---
 
@@ -63,11 +66,13 @@ This Markdown file provides a simple, pointwise breakdown of MongoDB and Postgre
   - Supports multiple languages (SQL, Python, Java, etc.) for functions.
   - Provides diverse data types (JSONB, arrays, geometric types) and custom types.
   - Includes full-text search, authentication, and foreign data wrappers.
+  - Supports logical replication for high availability.
 
 - **Basic Architecture:**
   - Follows a **client-server model**.
   - Master process (Postmaster) forks a new process for each client connection.
-  - Limited by CPU cores and RAM; uses **connection pooling** to manage excess requests.
+  - Limited by CPU cores and RAM; uses **connection pooling** (e.g., PgBouncer) to manage excess requests.
+  - Supports parallel query execution for faster processing.
 
 - **Process Types:**
   1. **PostgreSQL Server Process (Postmaster)**:
@@ -75,13 +80,14 @@ This Markdown file provides a simple, pointwise breakdown of MongoDB and Postgre
   2. **Backend Process**:
      - Handles queries and transactions for each client.
   3. **Background Worker Process**:
-     - Performs maintenance tasks (e.g., vacuuming) without user connection.
+     - Performs maintenance tasks (e.g., vacuuming, auto-analyze) without user connection.
 
 - **Memory Management:**
   - **Local Memory**: Used by backend processes for queries.
   - **Shared Memory**: Used by the server process for inter-process communication.
     - **Shared Buffers**: Cache for IO operations, reducing disk reads.
     - **WAL Buffers**: Store transaction logs for recovery and performance.
+    - **Work Memory**: Allocates memory for query execution, adjustable via `work_mem`.
 
 - **Database Structure:**
   - **Logical Structure**:
@@ -89,19 +95,13 @@ This Markdown file provides a simple, pointwise breakdown of MongoDB and Postgre
     - **Database**: Contains schemas (logical groups of tables, views, indexes).
     - **Catalog Tables**: Store metadata about database objects.
     - **Tables**: Rows and columns for data storage.
-    - **Indexes**: Speed up data retrieval.
+    - **Indexes**: Speed up data retrieval with B-tree, GiST, or BRIN options.
     - **Views**: Virtual tables for simplified queries.
-    - **Constraints**: Enforce data integrity (e.g., uniqueness).
+    - **Constraints**: Enforce data integrity (e.g., uniqueness, foreign keys).
   - **Physical Structure**:
     - Each database has its own directory.
     - Tables are stored in **heap files** (1 GB default, 8 KB pages).
     - Data spans multiple files when full.
-
-- **Interview Tip**: Emphasize PostgreSQL’s robustness, concurrency, and extensibility, and explain how shared buffers and WAL improve performance.
+    - Supports table partitioning for large datasets.
 
 ---
-
-### Final Notes
-- **MongoDB**: Great for flexible, scalable apps; focus on NoSQL benefits and WiredTiger.
-- **PostgreSQL**: Ideal for structured data and enterprise needs; highlight client-server model and memory management.
-- Practice explaining these points with examples (e.g., document validation, connection pooling) to stand out in interviews!
