@@ -49,8 +49,6 @@
   - **Efficient Resources**: Uses BSON for smaller data sizes and supports column-store indexes for analytics.
   - **Change Streams**: Allows real-time data updates for applications.
 
-- **Interview Tip**: Highlight MongoDB’s flexibility, scalability with sharding, and modern features like change streams and encryption, while noting WiredTiger’s efficiency.
-
 ---
 
 ## PostgreSQL Architecture Notes
