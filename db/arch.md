@@ -1,4 +1,4 @@
-# MongoDB and PostgreSQL Architecture Notes for Interview Preparation
+# MongoDB and PostgreSQL Architecture Notes
 
 ---
 
